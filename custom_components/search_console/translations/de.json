@@ -1,0 +1,60 @@
+{
+  "application_credentials": {
+    "description": "Lege in der [Google Cloud Console]({console_url}) einen OAuth-Client vom Typ „Webanwendung“ an und trage `{redirect_url}` als autorisierte Weiterleitungs-URI ein. Aktiviere im Projekt die „Google Search Console API“."
+  },
+  "config": {
+    "step": {
+      "pick_implementation": {
+        "title": "Anmeldemethode wählen"
+      },
+      "sites": {
+        "title": "Websites auswählen",
+        "data": {
+          "sites": "Websites"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Erneut anmelden",
+        "description": "Google akzeptiert die gespeicherte Anmeldung nicht mehr. Melde dich erneut an, damit die Zahlen aktuell bleiben."
+      }
+    },
+    "abort": {
+      "already_configured": "Search Console ist bereits eingerichtet.",
+      "cannot_connect": "Die Search Console API ist nicht erreichbar.",
+      "no_sites": "Dieses Google-Konto hat keine Search-Console-Properties.",
+      "reauth_successful": "Erneut angemeldet.",
+      "missing_credentials": "Lege zuerst Anmeldedaten für Google unter „Anwendungsanmeldeinformationen“ an.",
+      "authorize_url_timeout": "Zeitüberschreitung beim Erzeugen der Anmelde-URL.",
+      "oauth_error": "Google hat ungültige Token-Daten geliefert.",
+      "oauth_failed": "Fehler beim Abrufen des Zugriffstokens.",
+      "oauth_timeout": "Zeitüberschreitung beim Abrufen des Zugriffstokens.",
+      "oauth_unauthorized": "Google hat die Anmeldung abgelehnt.",
+      "user_rejected_authorize": "Anmeldung abgebrochen."
+    },
+    "create_entry": {
+      "default": "Bei Google angemeldet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Websites auswählen",
+        "data": {
+          "sites": "Websites"
+        }
+      }
+    },
+    "abort": {
+      "cannot_connect": "Die Search Console API ist nicht erreichbar."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "clicks": { "name": "Klicks" },
+      "impressions": { "name": "Impressionen" },
+      "ctr": { "name": "CTR" },
+      "position": { "name": "Durchschnittliche Position" },
+      "top_queries": { "name": "Top-Suchbegriff" }
+    }
+  }
+}

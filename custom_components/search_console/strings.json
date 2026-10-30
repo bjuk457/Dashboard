@@ -1,0 +1,60 @@
+{
+  "application_credentials": {
+    "description": "Create an OAuth client of type \"Web application\" at [Google Cloud Console]({console_url}) and add `{redirect_url}` as authorized redirect URI. Enable the \"Google Search Console API\" for the project."
+  },
+  "config": {
+    "step": {
+      "pick_implementation": {
+        "title": "Pick authentication method"
+      },
+      "sites": {
+        "title": "Choose sites",
+        "data": {
+          "sites": "Sites"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Sign in again",
+        "description": "Google no longer accepts the stored sign-in. Sign in again to keep the figures up to date."
+      }
+    },
+    "abort": {
+      "already_configured": "Search Console is already set up.",
+      "cannot_connect": "Could not reach the Search Console API.",
+      "no_sites": "This Google account has no Search Console properties.",
+      "reauth_successful": "Signed in again.",
+      "missing_credentials": "Add application credentials for Google first.",
+      "authorize_url_timeout": "Timed out generating the authorize URL.",
+      "oauth_error": "Google returned invalid token data.",
+      "oauth_failed": "Error while obtaining the access token.",
+      "oauth_timeout": "Timed out while obtaining the access token.",
+      "oauth_unauthorized": "Google refused the authorization.",
+      "user_rejected_authorize": "Sign-in was cancelled."
+    },
+    "create_entry": {
+      "default": "Signed in to Google."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Choose sites",
+        "data": {
+          "sites": "Sites"
+        }
+      }
+    },
+    "abort": {
+      "cannot_connect": "Could not reach the Search Console API."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "clicks": { "name": "Clicks" },
+      "impressions": { "name": "Impressions" },
+      "ctr": { "name": "CTR" },
+      "position": { "name": "Average position" },
+      "top_queries": { "name": "Top query" }
+    }
+  }
+}
