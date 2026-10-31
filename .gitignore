@@ -1,2 +1,13 @@
 __pycache__/
 *.pyc
+
+# Xcode
+*.xcodeproj/
+build/
+DerivedData/
+xcuserdata/
+Config/Config.xcconfig
+App/Info.plist
+App/App.entitlements
+Widget/Info.plist
+Widget/Widget.entitlements
