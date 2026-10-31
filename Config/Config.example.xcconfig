@@ -1,0 +1,12 @@
+// Copy this file to Config.xcconfig and fill in your values.
+
+// Team ID from Xcode > Settings > Accounts (10 characters).
+DEVELOPMENT_TEAM = ABCDE12345
+
+// Prefix for the bundle identifiers; must match the iOS OAuth client in Google Cloud.
+BUNDLE_ID_PREFIX = de.example
+
+// Client ID of the Google OAuth client (type "iOS").
+GOOGLE_CLIENT_ID = 1234567890-abcdefg.apps.googleusercontent.com
+// The same ID reversed, used as URL scheme for the sign-in redirect.
+GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.1234567890-abcdefg
