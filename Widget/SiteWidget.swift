@@ -4,12 +4,13 @@ import WidgetKit
 struct SiteEntry: TimelineEntry {
     let date: Date
     let report: SiteReport?
+    var social: [SocialReport] = []
     let message: String?
 }
 
 struct SiteProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> SiteEntry {
-        SiteEntry(date: .now, report: .sample, message: nil)
+        SiteEntry(date: .now, report: .sample, social: [.sampleInstagram, .sampleFacebook], message: nil)
     }
 
     func snapshot(for configuration: SelectSiteIntent, in context: Context) async -> SiteEntry {
@@ -24,10 +25,16 @@ struct SiteProvider: AppIntentTimelineProvider {
 
     private func entry(for configuration: SelectSiteIntent) async -> SiteEntry {
         guard let site = configuration.site?.id ?? SharedStore.sites.first else {
-            return SiteEntry(date: .now, report: nil, message: "Bitte in der App „Search Console“ mit Google anmelden.")
+            return SiteEntry(date: .now, report: nil, message: "Bitte in der App „Dashboard“ mit Google anmelden.")
         }
         let (report, error) = await GoogleAuth.loadReport(for: site)
-        return SiteEntry(date: .now, report: report, message: report == nil ? error?.localizedDescription : nil)
+        let social = await SharedStore.loadSocial(for: site).0
+        return SiteEntry(
+            date: .now,
+            report: report,
+            social: social,
+            message: report == nil ? error?.localizedDescription : nil
+        )
     }
 }
 
@@ -38,8 +45,8 @@ struct SiteWidget: Widget {
                 .containerBackground(.fill.tertiary, for: .widget)
         }
         .configurationDisplayName("Website")
-        .description("Klicks, Position und die wichtigsten Suchbegriffe einer Website.")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .description("Suchbegriffe aus der Search Console und die Zahlen von Instagram und Facebook für eine Website.")
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
     }
 }
 
@@ -52,7 +59,8 @@ struct SiteWidgetView: View {
             switch family {
             case .systemSmall: small(report)
             case .systemMedium: medium(report)
-            default: large(report)
+            case .systemLarge: large(report)
+            default: extraLarge(report)
             }
         } else {
             Text(entry.message ?? "Keine Daten")
@@ -128,8 +136,12 @@ struct SiteWidgetView: View {
             Text(report.host).font(.caption.weight(.semibold)).lineLimit(1)
             clicks(report)
             Spacer(minLength: 0)
-            if let top = report.topQueries.first {
-                Text(top.query).font(.caption2).lineLimit(1).foregroundStyle(.secondary)
+            if entry.social.isEmpty {
+                if let top = report.topQueries.first {
+                    Text(top.query).font(.caption2).lineLimit(1).foregroundStyle(.secondary)
+                }
+            } else {
+                ForEach(entry.social.prefix(2)) { FollowersLine(report: $0) }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -144,9 +156,15 @@ struct SiteWidgetView: View {
                     stats(report)
                 }
                 .frame(width: 120, alignment: .leading)
-                queryList(report.topQueries, limit: 5)
+                queryList(report.topQueries, limit: entry.social.isEmpty ? 5 : 4)
             }
             Spacer(minLength: 0)
+            if !entry.social.isEmpty {
+                HStack(spacing: 12) {
+                    ForEach(entry.social) { FollowersLine(report: $0) }
+                    Spacer(minLength: 0)
+                }
+            }
         }
     }
 
@@ -160,15 +178,57 @@ struct SiteWidgetView: View {
             }
             Divider()
             Text("Top-Suchbegriffe").font(.caption2.weight(.semibold)).foregroundStyle(.secondary)
-            queryList(report.topQueries, limit: 8)
-            if !report.winners.isEmpty || !report.losers.isEmpty {
+            queryList(report.topQueries, limit: entry.social.isEmpty ? 8 : 6)
+            if entry.social.isEmpty {
+                moversRow(report)
+            } else {
                 Divider()
                 HStack(alignment: .top, spacing: 12) {
-                    movers("Gewinner", report.winners)
-                    movers("Verlierer", report.losers)
+                    ForEach(entry.social.prefix(2)) { SocialCard(report: $0) }
                 }
             }
             Spacer(minLength: 0)
+        }
+    }
+
+    private func extraLarge(_ report: SiteReport) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            header(report)
+            HStack(alignment: .top, spacing: 16) {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(alignment: .top) {
+                        clicks(report)
+                        Spacer()
+                        stats(report)
+                    }
+                    Divider()
+                    Text("Top-Suchbegriffe").font(.caption2.weight(.semibold)).foregroundStyle(.secondary)
+                    queryList(report.topQueries, limit: 10)
+                    moversRow(report)
+                }
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+                Divider()
+                VStack(alignment: .leading, spacing: 12) {
+                    if entry.social.isEmpty {
+                        Text("Keine Social-Media-Konten zugeordnet")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                    ForEach(entry.social.prefix(2)) { SocialCard(report: $0, postLimit: 3) }
+                }
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+            }
+            Spacer(minLength: 0)
+        }
+    }
+
+    @ViewBuilder
+    private func moversRow(_ report: SiteReport) -> some View {
+        if !report.winners.isEmpty || !report.losers.isEmpty {
+            Divider()
+            HStack(alignment: .top, spacing: 12) {
+                movers("Gewinner", report.winners)
+                movers("Verlierer", report.losers)
+            }
         }
     }
 

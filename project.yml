@@ -21,7 +21,7 @@ targets:
     info:
       path: App/Info.plist
       properties:
-        CFBundleDisplayName: Search Console
+        CFBundleDisplayName: Dashboard
         LSApplicationCategoryType: public.app-category.productivity
         GoogleClientID: $(GOOGLE_CLIENT_ID)
         AppGroupID: $(APP_GROUP_ID)
@@ -37,7 +37,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(BUNDLE_ID_PREFIX).SearchConsoleDashboard
-        PRODUCT_NAME: Search Console
+        PRODUCT_NAME: Dashboard
     dependencies:
       - target: SearchConsoleWidget
   SearchConsoleWidget:
@@ -47,7 +47,7 @@ targets:
     info:
       path: Widget/Info.plist
       properties:
-        CFBundleDisplayName: Search Console
+        CFBundleDisplayName: Dashboard
         GoogleClientID: $(GOOGLE_CLIENT_ID)
         AppGroupID: $(APP_GROUP_ID)
         NSExtension:

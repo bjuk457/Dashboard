@@ -12,16 +12,16 @@ enum SharedStore {
         Bundle.main.object(forInfoDictionaryKey: "AppGroupID") as? String ?? ""
     }
 
-    private static var defaults: UserDefaults {
+    static var defaults: UserDefaults {
         UserDefaults(suiteName: groupID) ?? .standard
     }
 
-    private static func load<T: Decodable>(_ key: String) -> T? {
+    static func load<T: Decodable>(_ key: String) -> T? {
         guard let data = defaults.data(forKey: key) else { return nil }
         return try? JSONDecoder().decode(T.self, from: data)
     }
 
-    private static func save<T: Encodable>(_ value: T?, _ key: String) {
+    static func save<T: Encodable>(_ value: T?, _ key: String) {
         if let value, let data = try? JSONEncoder().encode(value) {
             defaults.set(data, forKey: key)
         } else {
@@ -52,5 +52,6 @@ enum SharedStore {
         token = nil
         for site in sites { defaults.removeObject(forKey: "report.\(site)") }
         sites = []
+        // Social accounts stay connected; only the Google side is signed out.
     }
 }

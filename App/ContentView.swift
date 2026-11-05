@@ -33,8 +33,8 @@ struct ContentView: View {
             Image(systemName: "magnifyingglass.circle.fill")
                 .font(.system(size: 56))
                 .foregroundStyle(.tint)
-            Text("Search Console").font(.title.bold())
-            Text("Melde dich mit dem Google-Konto an, das Zugriff auf deine Websites in der Search Console hat. Danach kannst du die Widgets über „Widgets bearbeiten“ auf den Schreibtisch legen.")
+            Text("Dashboard").font(.title.bold())
+            Text("Melde dich mit dem Google-Konto an, das Zugriff auf deine Websites in der Search Console hat, und verbinde danach Instagram und Facebook. Die Widgets legst du über „Widgets bearbeiten“ auf den Schreibtisch.")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: 380)
@@ -43,6 +43,10 @@ struct ContentView: View {
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
+            SettingsLink {
+                Text("Instagram & Facebook verbinden …")
+            }
+            .buttonStyle(.link)
         }
         .padding(32)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -53,6 +57,13 @@ struct ContentView: View {
             ForEach(model.reports, id: \.siteURL) { report in
                 Section {
                     SiteReportView(report: report)
+                    let social = model.socialReports(for: report.siteURL)
+                    if !social.isEmpty {
+                        HStack(alignment: .top, spacing: 24) {
+                            ForEach(social) { SocialCard(report: $0, postLimit: 3).frame(maxWidth: 280) }
+                        }
+                        .padding(.vertical, 4)
+                    }
                 } header: {
                     Text(report.host)
                 }
@@ -69,7 +80,10 @@ struct ContentView: View {
                     Label("Aktualisieren", systemImage: "arrow.clockwise")
                 }
                 .disabled(model.isLoading)
-                Button("Abmelden") { model.signOut() }
+                SettingsLink {
+                    Label("Instagram & Facebook", systemImage: "person.2")
+                }
+                Button("Bei Google abmelden") { model.signOut() }
             }
         }
     }
